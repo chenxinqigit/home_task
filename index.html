@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>任务分配</title>
+		<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		 crossorigin="anonymous">
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+		 crossorigin="anonymous"></script> -->
+		 <style>
+			 p{
+				 color: darkgoldenrod;
+				 font-size: 18px;
+			 }
+			 .m-bottom{
+				 margin-bottom: 50px;
+			 }
+		 </style>
+	</head>
+	<body>
+		<div class="container text-center" style="margin-top: 30px;">
+			<div id="start_page">
+				<h2>家务分配器</h2>
+				<img src="img/home_task.jpg" style="width: 100%;height: auto;"/>
+				<a class="btn btn-info" id="start" style="margin-top: 30px;width: 300px;height: 45px;line-height: 30px;">开始分配</a>
+			</div>
+			
+			<div id="result_page" class="text-center">
+			</div>
+		</div>
+		<script>
+			var start=document.getElementById("start");
+			//任务
+			var names=["晓彬","鑫其","丽芸","家锐"]
+			var tasks=["扫地","拖地","洗碗","晾衣服"];
+			start.onclick=function(){
+				tasks.sort(randomsort);
+				names.sort(randomsort);
+				//console.log(tasks);
+				printResult();
+				showOrHide(false);
+			};
+			//打乱数组
+			function randomsort(a,b){
+				//用Math.random()函数生成0~1之间的随机数与0.5比较，返回-1或1
+				return Math.random()>.5?-1:1;
+			}
+			//是否显示第一个页面否则显示第二个页面
+			function showOrHide(soh){
+				document.getElementById("start_page").style.display=(soh?"inline":"none");
+				document.getElementById("result_page").style.display=(soh?"none":"inline");
+			}
+			//打印结果
+			function printResult(){
+				var tempHtml="<h2 class='m-bottom'>分配结果</h2>";
+				for(var i=0;i<tasks.length;i++){
+					tempHtml+="<p>"+names[i]+" → "+tasks[i]+"</p>"
+				}
+				tempHtml+='<a class="btn btn-info" onclick="back()" style="margin-top:30px;">返回</a>';
+				document.getElementById("result_page").innerHTML=tempHtml;
+			}
+			//返回
+			function back(){
+				showOrHide(true);
+			}
+		</script>
+	</body>
+</html>
