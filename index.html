@@ -10,61 +10,132 @@
 		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
 		<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 		 crossorigin="anonymous"></script> -->
-		 <style>
-			 p{
-				 color: darkgoldenrod;
-				 font-size: 18px;
-			 }
-			 .m-bottom{
-				 margin-bottom: 50px;
-			 }
-		 </style>
+		<style>
+			p {
+				color: darkgoldenrod;
+				font-size: 18px;
+			}
+
+			.m-bottom {
+				margin-bottom: 50px;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="container text-center" style="margin-top: 30px;">
-			<div id="start_page">
+			<!-- 首页 -->
+			<div id="start_page" style="display: inline;">
 				<h2>家务分配器</h2>
-				<img src="img/home_task.jpg" style="width: 100%;height: auto;"/>
-				<a class="btn btn-info" id="start" style="margin-top: 30px;width: 300px;height: 45px;line-height: 30px;">开始分配</a>
+				<img src="img/home_task.jpg" style="width: 100%;height: auto;" />
+				<a class="btn btn-info" id="config" onclick="config()" style="margin-top: 30px;width: 300px;height: 45px;line-height: 30px;">去配置</a>
 			</div>
-			
+
+			<!-- 分配页 -->
+			<div id="dis_page" style="display: none">
+				<h2>配置人员和任务</h2>
+				<div>
+					<a class="btn btn-default" onclick="addPeople()">添加人员</a>
+					<span>&nbsp;&nbsp;</span>
+					<a class="btn btn-default" onclick="addTask()">添加任务</a>
+					<div class="text-left" style="margin-top: 20px;">
+						<p id="peos">当前人员：</p>
+						<p id="tas">当前任务：</p>
+					</div>
+					<a class="btn btn-info" id="start" style="margin-top: 30px;width: 300px;height: 45px;line-height: 30px;">开始分配</a>
+				</div>
+			</div>
+
+			<!-- 结果页 -->
 			<div id="result_page" class="text-center">
 			</div>
 		</div>
 		<script>
-			var start=document.getElementById("start");
+			//添加数组移出元素的方法
+			Array.prototype.remove = function(from, to) {
+				var rest = this.slice((to || from) + 1 || this.length);
+				this.length = from < 0 ? this.length + from : from;
+				return this.push.apply(this, rest);
+			};
+
+			var start = document.getElementById("start");
 			//任务
-			var names=["晓彬","鑫其","丽芸","家锐"]
-			var tasks=["扫地","拖地","洗碗","晾衣服"];
-			start.onclick=function(){
+			var names = ["晓彬", "鑫其", "丽芸", "家锐"]; //"晓彬","鑫其","丽芸","家锐"
+			var tasks = ["扫地", "拖地", "洗碗", "晾衣服"]; //"扫地","拖地","洗碗","晾衣服"
+			//到配置页面
+			function config() {
+				showPeopleAndTask();
+				showOrHide(false, true, false);
+			}
+			start.onclick = function() {
 				tasks.sort(randomsort);
 				names.sort(randomsort);
 				//console.log(tasks);
 				printResult();
-				showOrHide(false);
+				showOrHide(false, false, true);
 			};
 			//打乱数组
-			function randomsort(a,b){
+			function randomsort(a, b) {
 				//用Math.random()函数生成0~1之间的随机数与0.5比较，返回-1或1
-				return Math.random()>.5?-1:1;
-			}
-			//是否显示第一个页面否则显示第二个页面
-			function showOrHide(soh){
-				document.getElementById("start_page").style.display=(soh?"inline":"none");
-				document.getElementById("result_page").style.display=(soh?"none":"inline");
+				return Math.random() > .5 ? -1 : 1;
 			}
 			//打印结果
-			function printResult(){
-				var tempHtml="<h2 class='m-bottom'>分配结果</h2>";
-				for(var i=0;i<tasks.length;i++){
-					tempHtml+="<p>"+names[i]+" → "+tasks[i]+"</p>"
+			function printResult() {
+				var tempHtml = "<h2 class='m-bottom'>分配结果</h2>";
+				for (var i = 0; i < tasks.length; i++) {
+					tempHtml += "<p>" + names[i] + " → " + tasks[i] + "</p>"
 				}
-				tempHtml+='<a class="btn btn-info" onclick="back()" style="margin-top:30px;">返回</a>';
-				document.getElementById("result_page").innerHTML=tempHtml;
+				tempHtml += '<a class="btn btn-info" onclick="back()" style="margin-top:30px;">返回</a>';
+				document.getElementById("result_page").innerHTML = tempHtml;
 			}
 			//返回
-			function back(){
-				showOrHide(true);
+			function back() {
+				showPeopleAndTask();
+				showOrHide(false, true, false);
+			}
+			//是否显示第一个页面否则显示第二个页面
+			function showOrHide(start, config, result) {
+				document.getElementById("start_page").style.display = (start ? "inline" : "none");
+				document.getElementById("dis_page").style.display = (config ? "inline" : "none");
+				document.getElementById("result_page").style.display = (result ? "inline" : "none");
+			}
+			//添加人员
+			function addPeople() {
+				var name = prompt("输入要添加的人员名称！");
+				if (name) {
+					names.push(name);
+				}
+				showPeopleAndTask();
+			}
+			//添加任务
+			function addTask() {
+				var task = prompt("输入要做的任务！");
+				if (task) {
+					tasks.push(task);
+				}
+				showPeopleAndTask();
+			}
+			//移出人员
+			function removePeople(index){
+				names.remove(index);
+				showPeopleAndTask();
+			}
+			//移出任务
+			function removeTask(index){
+				tasks.remove(index);
+				showPeopleAndTask();
+			}
+			//遍历当前人员和任务
+			function showPeopleAndTask() {
+				var peoples = "当前人员：";
+				var tas = "当前任务：";
+				for (var i = 0; i < names.length; i++) {
+					peoples += '<span>&nbsp;&nbsp;</span><a class="btn btn-info" onclick="removePeople('+i+')">' + names[i] + '</a>';
+				}
+				for (var i = 0; i < tasks.length; i++) {
+					tas += '<span>&nbsp;&nbsp;</span><a class="btn btn-info" onclick="removeTask('+i+')">' + tasks[i] + '</a>';
+				}
+				document.getElementById("peos").innerHTML = peoples;
+				document.getElementById("tas").innerHTML = tas;
 			}
 		</script>
 	</body>
